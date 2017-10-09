@@ -106,7 +106,7 @@ export class NKDatetime implements ControlValueAccessor, AfterViewInit, OnDestro
                     this.datepicker = null;
                     this.init();
                     let startDateOpt = changes['datepickerOptions'].currentValue.startDate;
-                    if (startDateOpt && startDateOpt.getTime() > this.date.getTime()) {
+                    if (startDateOpt && this.date && startDateOpt.getTime() > this.date.getTime()) {
                         // clear model when has option start date > current date
                         this.clearModels();
                     }
