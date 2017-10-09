@@ -105,6 +105,11 @@ export class NKDatetime implements ControlValueAccessor, AfterViewInit, OnDestro
                 if (changes['datepickerOptions'].currentValue) {
                     this.datepicker = null;
                     this.init();
+                    let startDateOpt = changes['datepickerOptions'].currentValue.startDate;
+                    if (startDateOpt && startDateOpt.getTime() > this.date.getTime()) {
+                        // clear model when has option start date > current date
+                        this.clearModels();
+                    }
                 } else if (changes['datepickerOptions'].currentValue === false) {
                     this.datepicker.remove();
                 }
@@ -183,6 +188,9 @@ export class NKDatetime implements ControlValueAccessor, AfterViewInit, OnDestro
                         newDate.setHours(this.date.getHours());
                         newDate.setMinutes(this.date.getMinutes());
                         newDate.setSeconds(this.date.getSeconds());
+                    } else if (this.timepicker) {
+                        // reset timepicker if date null
+                        this.timepicker.timepicker('setTime', null);
                     }
 
                     this.date = newDate;
@@ -240,8 +248,9 @@ export class NKDatetime implements ControlValueAccessor, AfterViewInit, OnDestro
             const meridian = date.getHours() >= 12 ? ' PM' : ' AM';
             const time =
                 this.pad(hours) + ':' +
-                this.pad(this.date.getMinutes()) + ':' +
-                this.pad(this.date.getSeconds()) +
+                this.pad(this.date.getMinutes()) +
+                (this.timepickerOptions.showSeconds || this.timepickerOptions.showSeconds === undefined
+                    ? ':' + this.pad(this.date.getSeconds()) : '') +
                 (this.timepickerOptions.showMeridian || this.timepickerOptions.showMeridian === undefined
                     ? meridian : '');
             this.timepicker.timepicker('setTime', time);
